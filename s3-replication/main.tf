@@ -11,8 +11,7 @@ provider "aws" {
   region = var.aws_region_backup
 }
 resource "aws_iam_role" "replication" {
-  name = "tf-iam-role-replication"
-
+  name = "${var.env_type}-tf-iam-role-rep"
   assume_role_policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -32,7 +31,7 @@ tags = merge(var.common_tags)
 }
 
 resource "aws_iam_policy" "replication" {
-  name = "tf-iam-role-policy-replication"
+  name = "tf-iam-role-policy-rep"
 
   policy = <<POLICY
 {
@@ -72,14 +71,14 @@ POLICY
 }
 
 resource "aws_iam_policy_attachment" "replication" {
-  name       = "tf-iam-role-attachment-replication"
+  name       = "${var.env_type}tf-iam-role-att-rep"
   roles      = [aws_iam_role.replication.name]
   policy_arn = aws_iam_policy.replication.arn
 }
 
 resource "aws_s3_bucket" "state" {
-  provider = "aws.state"
-  bucket   = "${var.env_type}-tf-state"
+  provider = aws.state
+  bucket   = "${var.env_type}-${var.bucket_name}"
   acl      = "private"
   versioning {
     enabled = true
@@ -104,23 +103,10 @@ resource "aws_s3_bucket" "state" {
 
 
 resource "aws_s3_bucket" "backup" {
-  provider = "aws.backup"
-  bucket = "${var.env_type}-tf-state-backup"
+  provider = aws.backup
+  bucket = "${var.env_type}-${var.bucket_name}-replicated"
   versioning {
     enabled = true
   }
-  tags = merge(var.common_tags)
-}
-
-
-resource "aws_dynamodb_table" "tf-state-lock" {
-  name = "${var.env_type}-tf-state-lock"
-  hash_key = "LockID"
-  read_capacity = 20
-  write_capacity = 20
-  attribute {
-    name = "LockID"
-    type = "S"
-  } 
   tags = merge(var.common_tags)
 }
