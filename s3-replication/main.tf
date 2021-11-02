@@ -12,8 +12,15 @@ provider "aws" {
 }
 
 resource "aws_kms_key" "bucket-key" {
- description             = "This key is used to encrypt bucket objects"
- deletion_window_in_days = 10
+  providers = aws.state
+  description             = "This key is used to encrypt bucket objects"
+  deletion_window_in_days = 10
+}
+
+resource "aws_kms_key" "bucket-key-replicated" {
+  provider = aws.backup
+  description             = "This key is used to encrypt bucket objects"
+  deletion_window_in_days = 10
 }
 
 resource "aws_iam_role" "replication" {
@@ -110,7 +117,7 @@ resource "aws_s3_bucket" "state" {
       destination {
         bucket        = aws_s3_bucket.backup.arn
         storage_class = "STANDARD"
-        replica_kms_key_id = aws_kms_key.bucket-key.arn
+        replica_kms_key_id = aws_kms_key.bucket-key-replicated
       }
       source_selection_criteria {
         sse_kms_encrypted_objects {
