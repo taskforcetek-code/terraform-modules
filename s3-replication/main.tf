@@ -12,7 +12,7 @@ provider "aws" {
 }
 
 resource "aws_kms_key" "bucket-key" {
-  providers = aws.state
+  provider = aws.state
   description             = "This key is used to encrypt bucket objects"
   deletion_window_in_days = 10
 }
