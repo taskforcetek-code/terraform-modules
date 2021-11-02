@@ -121,6 +121,7 @@ resource "aws_s3_bucket" "state" {
   }
   tags = merge(var.common_tags)
 }
+}
 
 
 resource "aws_s3_bucket" "backup" {
