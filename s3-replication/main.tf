@@ -11,17 +11,6 @@ provider "aws" {
   region = var.aws_region_backup
 }
 
-resource "aws_kms_key" "bucket-key" {
-  provider = aws.state
-  description             = "This key is used to encrypt bucket objects"
-  deletion_window_in_days = 10
-}
-
-resource "aws_kms_key" "bucket-key-replicated" {
-  provider = aws.backup
-  description             = "This key is used to encrypt bucket objects"
-  deletion_window_in_days = 10
-}
 
 resource "aws_iam_role" "replication" {
   name = "${var.env_type}-tf-iam-role-rep"
@@ -97,15 +86,6 @@ resource "aws_s3_bucket" "state" {
     enabled = true
   }
 
- server_side_encryption_configuration {
-   rule {
-     apply_server_side_encryption_by_default {
-       kms_master_key_id = aws_kms_key.bucket-key.arn
-       sse_algorithm     = "aws:kms"
-     }
-   }
- }
-
   replication_configuration {
     role = aws_iam_role.replication.arn
 
@@ -117,12 +97,6 @@ resource "aws_s3_bucket" "state" {
       destination {
         bucket        = aws_s3_bucket.backup.arn
         storage_class = "STANDARD"
-        replica_kms_key_id = aws_kms_key.bucket-key-replicated.arn
-      }
-      source_selection_criteria {
-        sse_kms_encrypted_objects {
-          enabled = true
-        }
       }
 
     }
@@ -137,13 +111,6 @@ resource "aws_s3_bucket" "backup" {
   versioning {
     enabled = true
   }
- server_side_encryption_configuration {
-   rule {
-     apply_server_side_encryption_by_default {
-       kms_master_key_id = aws_kms_key.bucket-key-replicated.arn
-       sse_algorithm     = "aws:kms"
-     }
-   }
- }
+
   tags = merge(var.common_tags)
 }
