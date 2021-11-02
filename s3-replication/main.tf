@@ -106,10 +106,16 @@ resource "aws_s3_bucket" "state" {
       id     = "StateReplicationAll"
       prefix = ""
       status = "Enabled"
+      
 
       destination {
         bucket        = aws_s3_bucket.backup.arn
         storage_class = "STANDARD"
+        replica_kms_key_id = aws_kms_key.bucket-key.id
+      }
+      source_selection_criteria {
+        sse_kms_encrypted_objects {
+          enabled = true
       }
     }
   }
