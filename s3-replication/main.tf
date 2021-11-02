@@ -71,7 +71,7 @@ POLICY
 }
 
 resource "aws_iam_policy_attachment" "replication" {
-  name       = "${var.env_type}tf-iam-role-att-rep"
+  name       = "${var.env_type}-tf-iam-role-att-rep"
   roles      = [aws_iam_role.replication.name]
   policy_arn = aws_iam_policy.replication.arn
 }
