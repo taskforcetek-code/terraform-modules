@@ -90,14 +90,14 @@ resource "aws_s3_bucket" "state" {
     enabled = true
   }
 
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        kms_master_key_id = aws_kms_key.bucket-key.arn
-        sse_algorithm     = "aws:kms"
-      }
-    }
-  }
+#  server_side_encryption_configuration {
+#    rule {
+#      apply_server_side_encryption_by_default {
+#        kms_master_key_id = aws_kms_key.bucket-key.arn
+#        sse_algorithm     = "aws:kms"
+#      }
+#    }
+#  }
 
   replication_configuration {
     role = aws_iam_role.replication.arn
@@ -123,13 +123,13 @@ resource "aws_s3_bucket" "backup" {
   versioning {
     enabled = true
   }
-  server_side_encryption_configuration {
-    rule {
-      apply_server_side_encryption_by_default {
-        kms_master_key_id = aws_kms_key.bucket-key.arn
-        sse_algorithm     = "aws:kms"
-      }
-    }
-  }
+#  server_side_encryption_configuration {
+#    rule {
+#      apply_server_side_encryption_by_default {
+#        kms_master_key_id = aws_kms_key.bucket-key.arn
+#        sse_algorithm     = "aws:kms"
+#      }
+#    }
+#  }
   tags = merge(var.common_tags)
 }
