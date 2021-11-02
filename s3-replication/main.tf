@@ -117,7 +117,7 @@ resource "aws_s3_bucket" "state" {
       destination {
         bucket        = aws_s3_bucket.backup.arn
         storage_class = "STANDARD"
-        replica_kms_key_id = aws_kms_key.bucket-key-replicated
+        replica_kms_key_id = aws_kms_key.bucket-key-replicated.arn
       }
       source_selection_criteria {
         sse_kms_encrypted_objects {
