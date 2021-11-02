@@ -11,10 +11,10 @@ provider "aws" {
   region = var.aws_region_backup
 }
 
-resource "aws_kms_key" "bucket-key" {
-  description             = "This key is used to encrypt bucket objects"
-  deletion_window_in_days = 10
-}
+#resource "aws_kms_key" "bucket-key" {
+#  description             = "This key is used to encrypt bucket objects"
+#  deletion_window_in_days = 10
+#}
 
 resource "aws_iam_role" "replication" {
   name = "${var.env_type}-tf-iam-role-rep"
