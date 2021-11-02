@@ -110,7 +110,14 @@ resource "aws_s3_bucket" "state" {
       destination {
         bucket        = aws_s3_bucket.backup.arn
         storage_class = "STANDARD"
+        replica_kms_key_id = aws_kms_key.bucket-key.key_id
       }
+      source_selection_criteria {
+        sse_kms_encrypted_objects {
+          enabled = true
+        }
+      }
+
     }
   }
   tags = merge(var.common_tags)
