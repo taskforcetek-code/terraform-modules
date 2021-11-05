@@ -63,7 +63,7 @@ resource "null_resource" "pause" {
     kubernetes_namespace.argocd
   ]
   provisioner "local-exec" {
-    command = "sleep 5"
+    command = "sleep 15"
   } 
   
 }
