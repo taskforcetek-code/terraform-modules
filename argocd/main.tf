@@ -77,7 +77,7 @@ resource "null_resource" "print-default-password" {
   ]
   provisioner "local-exec" {
     when = create
-    command = "kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=\"{.data.password}\" | base64 -d"
+    command = "kubectl config use-context ${var.config_context}; kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath=\"{.data.password}\" | base64 -d"
   }
 }
 
