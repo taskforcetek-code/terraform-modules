@@ -27,11 +27,28 @@ resource "kind_cluster" "kind-base" {
      }
      node {
         role = "control-plane"
-        image = "kindest/node:v1.18.8"
+        image = "kindest/node:${var.k8s_version}"
+        kubeadm_config_patches = [
+        <<-INTF
+kind: InitConfiguration
+nodeRegistration:
+  kubeletExtraArgs:
+    node-labels: "ingress-ready=true"
+        INTF
+        ]
+       extra_port_mappings {
+         container_port = var.container_port_http
+         host_port = var.host_port_http
+       }
+       extra_port_mappings {
+         container_port = var.container_port_https
+         host_port = var.host_port_https
+       }
+
      }
      node{
         role = "worker"
-        image = "kindest/node:v1.18.8"
+        image = "kindest/node:${var.k8s_version}"
         kubeadm_config_patches = [
         <<-INTF
 kind: JoinConfiguration
